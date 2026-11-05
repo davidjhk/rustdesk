@@ -53,6 +53,9 @@ replace flutter/macos/Runner.xcodeproj/project.pbxproj 'PRODUCT_BUNDLE_IDENTIFIE
 wf=.github/workflows/flutter-build.yml
 replace "$wf" 'RustDesk.app' "$APP_NAME.app"
 replace "$wf" 'Contents/MacOS/RustDesk ' "Contents/MacOS/$APP_NAME "
+# build.py copies the service binary into the bundle by its old name.
+replace build.py 'Release/RustDesk.app' "Release/$APP_NAME.app"
+replace build.py '--icon RustDesk.app 200 190 --hide-extension RustDesk.app' "--icon $APP_NAME.app 200 190 --hide-extension $APP_NAME.app"
 
 for f in icon.png mac-icon.png icon.ico tray-icon.ico mac-tray-dark-x2.png mac-tray-light-x2.png; do
   cp "$ICONS/$f" "res/$f"
