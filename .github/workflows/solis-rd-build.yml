@@ -1,0 +1,30 @@
+name: SOLIS-RD build
+
+# Builds the SOLIS-RD client with upstream's own pipeline and uploads it to
+# the release solis-rd-<upstream version>.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.v.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: solis/UPSTREAM_VERSION
+          sparse-checkout-cone-mode: false
+      - id: v
+        run: echo "tag=solis-rd-$(cat solis/UPSTREAM_VERSION)" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: version
+    uses: ./.github/workflows/flutter-build.yml
+    secrets: inherit
+    with:
+      upload-artifact: true
+      upload-tag: ${{ needs.version.outputs.tag }}
