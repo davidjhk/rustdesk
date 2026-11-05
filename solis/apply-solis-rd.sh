@@ -36,6 +36,11 @@ p.write_text(text.replace(old, new))
 PY
 }
 
+# replace_if_present FILE OLD NEW: for stopgaps upstream may fix on its own.
+replace_if_present() {
+  if grep -qF -- "$2" "$1"; then replace "$@"; else echo "note: $1 no longer has: $2"; fi
+}
+
 cd "$SRC"
 test -f libs/hbb_common/src/config.rs || { echo "libs/hbb_common is missing (git submodule update --init)" >&2; exit 1; }
 
@@ -53,6 +58,8 @@ replace flutter/macos/Runner.xcodeproj/project.pbxproj 'PRODUCT_BUNDLE_IDENTIFIE
 wf=.github/workflows/flutter-build.yml
 replace "$wf" 'RustDesk.app' "$APP_NAME.app"
 replace "$wf" 'Contents/MacOS/RustDesk ' "Contents/MacOS/$APP_NAME "
+# GitHub retired the macos-14 arm64 runner; upstream 1.5.1 still asks for it.
+replace_if_present "$wf" 'os: macos-14,' 'os: macos-15,'
 # build.py copies the service binary into the bundle by its old name.
 replace build.py 'Release/RustDesk.app' "Release/$APP_NAME.app"
 replace build.py '--icon RustDesk.app 200 190 --hide-extension RustDesk.app' "--icon $APP_NAME.app 200 190 --hide-extension $APP_NAME.app"
