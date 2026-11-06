@@ -48,6 +48,8 @@ cfg=libs/hbb_common/src/config.rs
 replace "$cfg" 'RwLock::new("RustDesk".to_owned())' "RwLock::new(\"$APP_NAME\".to_owned())"
 replace "$cfg" '&["rs-ny.rustdesk.com"]' "&[\"$RENDEZVOUS\"]"
 replace "$cfg" '"OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw="' "\"$PUBKEY\""
+# Desktop sessions open as "scale adaptive" (fit the window) instead of "original size".
+replace "$cfg" 'keys::OPTION_VIEW_STYLE => self.get_string(key, "original", vec!["adaptive"]),' 'keys::OPTION_VIEW_STYLE => self.get_string(key, "adaptive", vec!["original"]),'
 
 xc=flutter/macos/Runner/Configs/AppInfo.xcconfig
 replace "$xc" 'PRODUCT_NAME = RustDesk' "PRODUCT_NAME = $APP_NAME"
